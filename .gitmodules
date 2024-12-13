@@ -1,0 +1,3 @@
+[submodule "kubeadm"]
+	path = kubeadm
+	url = https://github.com/shanmugabujji/k8s.git
