@@ -1,1 +1,10 @@
-kubeadm init --config= <custom config file.yaml>
+kubeadm init --config= <custom config file.yaml> This command used for create master node
+
+kubeadm join --config= < custom joing config file.yaml> This command used to create node and add to master node
+
+Note: During add mnode to master memer add token number in custom join file.yaml
+
+Example:
+ token: "nqrd22.qbxw6596fg8bflql"
+  caCertHashes:
+   - "sha256:837488103225b7c2800376611de33dd0bced8ce3f507c0e14c3e3c1c6df6acbf"
