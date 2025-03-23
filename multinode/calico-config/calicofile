@@ -1,0 +1,29 @@
+
+If need follow below command:
+
+	kubectl describe node master | grep Taints
+        kubectl taint node master node-role.kubernetes.io/control-plane:NoSchedule-
+Step:1
+
+ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/tigera-operator.yaml
+
+Step:2
+
+  curl https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/custom-resources.yaml -O
+
+Step:3 After dowunload custom-resource.yaml 
+       Edit and modify "CIDR" ip
+                       "  encapsulation: VXLANCrossSubnet to encapsulation:None save and exit file.
+
+Step:4
+   
+	kubectl create -f custom-resources.yaml
+
+Step:5 Download calico ctl 
+ 
+ 	curl -L https://github.com/projectcalico/calico/releases/download/v3.29.2/calicoctl-linux-amd64 -o calicoctl
+	chmod +x calicoctl
+        mv calicoctl /usr/local/bin/
+step:6
+	calicoctl ipam show --show-blocks
+	ip route get 10.244.166.135 fibmatch 
