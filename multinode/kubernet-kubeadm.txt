@@ -1,0 +1,76 @@
+1.setenforce 0
+2.sed -i '/ swap / s/^\(.*\)$/#\l/g' /etc/fstab
+
+3.modeprobe overlay
+4.modeprobe br_netfilter
+5.tee /etc/modules-load.d/k8s.conf <<EOF
+  overlay
+  br_netfilter
+  EOF
+6.tee /etc/sysctl.d/k8s.conf <<EOT
+  net.bridge.bridge-nf-call-iptables = 1
+  net.ipv4.ip_forward = 1
+  net.bridge.bridge-nf-call-ip6tables = 1
+ EOT
+
+7.sysctl --system
+8.Master-node
+ firewall-cmd --permanent --add-port={6443,2379,2380,10250,10251,10252,10257,10259,179}/tcp
+ firewall-cmd --permanent --add-port=4789/udp
+ firewall-cmd --reload
+ firewall-cmd --list-all
+
+9.Worker-node
+ firewall-cmd --permanent --add-port={179,10250,30000-32767}/tcp
+ firewall-cmd --permanent --add-port=4789/udp
+ firewall-cmd --reload
+
+10.yum install -y yum-utils
+11.yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+12.yum install containerd.io -y
+13.systemctl enable containerd --now
+14.containerd config default
+15.containerd config default | tee /etc/containerd/config.toml
+16.vim /etc/containerd/config.toml(Master and workers)
+   Change SystemdCgroup = false to SyctemdCgroup = true 
+			(or)
+   sed -i 's/^SystemdCgroup \= false/SystemdCgroup \= true/' /etc/containerd/config.toml
+17.systemctl restart containerd
+18.Add K8s repo
+   vi /etc/yum.repos.d/k8s.repo(Add below repo)
+        [kubernetes]
+	name=Kubernetes
+	baseurl=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/
+	enabled=1
+	gpgcheck=1
+	gpgkey=https://pkgs.k8s.io/core:/stable:/v1.30/rpm/repodata/repomd.xml.key
+	exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+19.yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+    systemctl enable --now kubelet
+20.kubeadm init --contol-plane-endpoint=master
+
+    error execution phase preflight: [preflight] Some fatal errors occurred:
+        [ERROR FileContent--proc-sys-net-ipv4-ip_forward]: /proc/sys/net/ipv4/ip_forward contents are not set to 1
+   [preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+  To see the stack trace of this error execute with --v=5 or higher
+  Note: If face above eeror folow below process
+20.1 vim  /etc/sysctl.conf Add below line
+    net.ipv4.ip_forward = 1
+20.1.2 systemctl restart containerd
+20.1.3  sysctl -p
+21.kubeadm init --control-plane-endpoint=master (Master side)
+    mkdir -p $HOME/.kube
+    cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    chown $(id -u):$(id -g) $HOME/.kube/config
+
+22.kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml (MAster Side)
+23.kubeadm join master:6443 --token pysdxd.9loa58pwojq5a49u -
+   -discovery-token-ca-cert-hash sha256:dbbad300d970d11ea5a062b852ce035fc71240f532b1639fd2d68e844a96ef9c (Workernode only)
+
+
+
+
+
+
+
+
