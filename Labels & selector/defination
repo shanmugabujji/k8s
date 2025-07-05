@@ -1,0 +1,8 @@
+		LABELS & SELECTOR
+
+Provides a way to categorize & target resources with in acluster
+
+Labels categorize resource in kubernetes with identfying tags
+selectors filter resources based on their assgined labels
+
+
