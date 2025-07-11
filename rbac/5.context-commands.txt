@@ -1,0 +1,16 @@
+step1:
+
+Add users to kubeconfig
+
+kubectl config set-credentials gsk --client-certificate=gsk.crt --client-key=gsk.key
+
+step2:
+create context for the user
+
+kubectl config set-context gsk-context --cluster=kubernetes --user=gsk --namespace=defaulu
+kubectl config use-context gsk-context
+kubectl config get-contexts
+
+kubectl auth can-i list pods --as=gsk -n default
+
+

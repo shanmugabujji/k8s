@@ -1,0 +1,6 @@
+kubectl apply -f clusterrole.yaml (for crate clusterrole using clusterrole.yaml)
+kubectl apply -f clusterrole-binding.yaml (for crate clusterrole using clusterrole-binding.yaml)
+
+Test-command
+kubectl auth can-i list pods --as=gsk --all-namespaces
+

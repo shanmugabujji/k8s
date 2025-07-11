@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default         # Change to your target namespace
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+
+
+# namespace: Limits the role to a specific namespace.
+# resources: What the user/group can access (pods here).
+# verbs: Allowed actions (get, list, watch, etc.).
+
+

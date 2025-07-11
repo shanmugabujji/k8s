@@ -1,0 +1,47 @@
+1.mkdir cert
+2.cp /etc/kubernetes/pki/ca.crt /root/cert
+3.cp /etc/kubernetes/pki/ca.key /root/cert
+4.cd cert
+5.openssl genrsa -out gsk.key 2048
+#Explain: This command generates a 2048-bit RSA private key and saves it to a file named gsk.key.
+    | Part           | Meaning                                                                                         |
+| -------------- | ----------------------------------------------------------------------------------------------- |
+| `openssl`      | The OpenSSL command-line tool — used for SSL/TLS, cryptography, certificates, etc.              |
+| `genrsa`       | Generates an RSA private key. *(Deprecated in newer OpenSSL versions — use `genpkey` instead.)* |
+| `-out gsk.key` | Specifies the output file where the private key will be saved — here, `gsk.key`.                |
+| `2048`         | The key size in bits (2048 bits = strong, secure key). Common choices are 2048 or 4096.         |
+
+5.1openssl rsa -in gsk.key -check
+	
+6.openssl req -new -key gsk.key -out gsk.csr -subj "/CN=gsk/O=developers"
+#  Explain: This command generates a Certificate Signing Request (CSR) named gsk.csr using the private key gsk.key.
+| Part                           | Description                                                                                                        |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `openssl`                      | The OpenSSL CLI tool for cryptographic operations.                                                                 |
+| `req`                          | Stands for **certificate request** — used to create or process CSRs and certificates.                              |
+| `-new`                         | Tells OpenSSL to create a **new CSR**.                                                                             |
+| `-key gsk.key`                 | Specifies the **private key** to use when generating the CSR. This ensures the CSR is signed with the private key. |
+| `-out gsk.csr`                 | The output file — the resulting CSR will be saved as `gsk.csr`.                                                    |
+| `-subj "/CN=gsk/O=developers"` | Supplies the **subject DN (Distinguished Name)** inline, avoiding interactive prompts.                             |
+
+| Component      | Meaning                                                                                          |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| `CN=gsk`       | **Common Name** — typically the domain name (e.g., for TLS) or username (e.g., for client auth). |
+| `O=developers` | **Organization** — logical group, company, or team name.                                         |
+6.1 openssl req -in gsk.csr -noout -text
+	
+7.openssl x509 -req -in gsk.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out gsk.crt -days 365(cert)
+# Explain: This command signs a Certificate Signing Request (CSR) (gsk.csr) using a Certificate Authority (CA) to produce a signed certificate (gsk.crt), valid for 365 days.
+| Part              | Description                                                                                                       |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `openssl`         | The OpenSSL command-line tool.                                                                                    |
+| `x509`            | The command to create or manipulate X.509 certificates (like `.crt` files).                                       |
+| `-req`            | Indicates the input is a **CSR** (not a certificate).                                                             |
+| `-in gsk.csr`     | The **CSR file** to be signed. Contains subject info and public key.                                              |
+| `-CA ca.crt`      | The **CA certificate** (public part). Used to sign the new certificate.                                           |
+| `-CAkey ca.key`   | The **CA's private key** — required to cryptographically sign the certificate.                                    |
+| `-CAcreateserial` | Tells OpenSSL to **generate a serial number file** (e.g., `ca.srl`). This is needed if one doesn't already exist. |
+| `-out gsk.crt`    | Output file — the final **signed certificate**.                                                                   |
+| `-days 365`       | Validity of the certificate — here, 365 days from the time of creation.                                           |
+
+7.1 openssl x509 -in gsk.crt -noout -text

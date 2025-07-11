@@ -1,0 +1,11 @@
+# after save the file run this command in terminal for rolebinding creation.
+kubectl apply -f role-binding.yaml
+kubectl get rolebindibf (for verification)
+
+# after save the file run this command in terminal for role creation.
+
+kubectl apply -f role.yaml
+kubectl get role (for verification)
+
+
+
