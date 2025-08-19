@@ -1,8 +1,8 @@
 1.setenforce 0
 2.sed -i '/ swap / s/^\(.*\)$/#\l/g' /etc/fstab
 
-3.modeprobe overlay
-4.modeprobe br_netfilter
+3.modprobe overlay
+4.modprobe br_netfilter
 5.tee /etc/modules-load.d/k8s.conf <<EOF
   overlay
   br_netfilter
