@@ -1,3 +1,40 @@
 Service is a gateway that distributes the incoming traffic between its endpoints
-Endpoints contain the address of underlying Pods to which the service will route
-the traffic to.
+Endpoints contain the address of underlying Pods to which the service will route the traffic to.
+
+Step 1 - Create Simple Service
+
+Create a Simple Service in Kubernetes. This service will have its own IP.
+
+service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+ name: simple-service
+spec:
+ ports:
+ - port: 80
+   targetPort: 80
+
+# kubectl create -f service.yaml
+
+# output
+     # C:\kplabs-k8s>kubectl describe service simple-service
+
+
+     # Name : simple-service
+     # Namespace:default
+     #Labels: <none>
+     #Annotations: <none>
+     #Selector: <none>
+     #Type :ClusterIP
+     #IP Family Policy:
+     #IP Families: 
+     #IP:
+     #IPs:
+     #Port:
+     #TargetPort:
+     #Endpoints: none
+     #Session Affinity:
+     #Events:
+
+
