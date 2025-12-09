@@ -34,7 +34,7 @@
 16.vim /etc/containerd/config.toml(Master and workers)
    Change SystemdCgroup = false to SyctemdCgroup = true 
 			(or)
-   sed -i 's/^SystemdCgroup \= false/SystemdCgroup \= true/' /etc/containerd/config.toml
+sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
 17.systemctl restart containerd
 18.Add K8s repo
    vi /etc/yum.repos.d/k8s.repo(Add below repo)
@@ -66,6 +66,10 @@
 22.kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml (MAster Side)
 23.kubeadm join master:6443 --token pysdxd.9loa58pwojq5a49u -
    -discovery-token-ca-cert-hash sha256:dbbad300d970d11ea5a062b852ce035fc71240f532b1639fd2d68e844a96ef9c (Workernode only)
+
+For change ip for existing kubeadm
+kubectl config set-cluster kubernetes --server=https://<NEW_MASTER_IP>:6443
+
 
 
 
