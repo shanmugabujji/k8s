@@ -14,7 +14,7 @@ echo "===== Exposing Argo CD as NodePort ====="
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
 
 echo "===== Downloading Argo CD CLI ====="
-wget -q https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 -O argocd
+wget https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 -O argocd
 
 echo "===== Installing Argo CD CLI ====="
 chmod +x argocd
@@ -36,7 +36,7 @@ List Applications
 argocd app list
 
 
-
+Trouble shooting
 kubectl rollout restart deployment coredns -n kube-system
 kubectl rollout restart deployment argocd-repo-server -n argocd
 kubectl rollout restart deployment argocd-server -n argocd
