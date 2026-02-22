@@ -26,7 +26,17 @@ argocd version --client
 echo "===== Argo CD installation completed successfully! ====="
 
 echo "To get the admin password, run:"
-echo "kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath=\"{.data.password}\" | base64 -d && echo"
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d && echo
 
 echo "To get NodePort:"
 echo "kubectl get svc argocd-server -n argocd"
+
+ARGOCD COMMANDS
+List Applications
+argocd app list
+
+
+
+kubectl rollout restart deployment coredns -n kube-system
+kubectl rollout restart deployment argocd-repo-server -n argocd
+kubectl rollout restart deployment argocd-server -n argocd
