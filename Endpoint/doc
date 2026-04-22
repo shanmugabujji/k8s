@@ -1,4 +1,4 @@
-Service is a gateway that distributes the incoming traffic between its endpoints
+#Service is a gateway that distributes the incoming traffic between its endpoints
 Endpoints contain the address of underlying Pods to which the service will route the traffic to.
 
 Step 1 - Create Simple Service
