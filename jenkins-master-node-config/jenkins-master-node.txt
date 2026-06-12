@@ -1,0 +1,72 @@
+🖥️ 1. Install OpenSSH on Windows 10
+
+Windows 10 already includes OpenSSH—you just need to enable it.
+
+👉 Method A: Using Settings (easiest)
+Open Settings
+Go to Apps → Optional Features
+Click “Add a feature”
+Search and install:
+OpenSSH Client ✅ (required)
+OpenSSH Server ✅ (needed if Jenkins connects via SSH)
+
+👉 Method B: Using PowerShell
+
+Run PowerShell as Administrator:
+
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+
+▶️ 2. Start SSH Server
+
+Still in PowerShell (Admin):
+
+Start-Service sshd
+Set-Service -Name sshd -StartupType Automatic
+
+👉 This ensures SSH runs automatically on boot.
+
+🔥 3. Allow SSH Through Firewall
+New-NetFirewallRule -Name sshd -DisplayName "OpenSSH Server" -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
+
+🔑 4. Generate SSH Key
+
+Open Command Prompt or PowerShell (normal user):
+
+ssh-keygen
+
+📁 Keys will be created here:
+C:\Users\YourUsername\.ssh\
+
+Files:
+
+id_rsa → private key 🔒
+id_rsa.pub → public key 🔓
+
+📌 5. Add Public Key to Authorized Keys
+
+Run:
+type $env:USERPROFILE\.ssh\id_rsa.pub >> $env:USERPROFILE\.ssh\authorized_keys
+
+🔹 Step 1: Show your public key on Windows
+
+In Command Prompt or PowerShell:
+
+type %USERPROFILE%\.ssh\id_rsa.pub
+
+Copy the full output.
+
+🔹 Step 2: Login to Linux machine
+ssh user@linux-ip
+🔹 Step 3: Add key to Linux
+
+Run:
+
+mkdir -p ~/.ssh
+nano ~/.ssh/authorized_keys
+
+Paste the copied key → save.
+
+🔹 Step 4: Fix permissions (important)
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
