@@ -1,0 +1,5 @@
+VERSION="v1.34.0"
+wget https://github.com/kubernetes-sigs/cri-tools/releases/download/${VERSION}/crictl-${VERSION}-linux-amd64.tar.gz
+tar -xzf crictl-${VERSION}-linux-amd64.tar.gz 
+mv crictl /usr/local/bin/ 
+chmod +x /usr/local/bin/crictl
