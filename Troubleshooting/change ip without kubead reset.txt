@@ -1,0 +1,81 @@
+Master-node:
+
+Check kube-apiserver manifest
+
+Open:
+
+	vi /etc/kubernetes/manifests/kube-apiserver.yaml
+
+Look for:
+
+--advertise-address=192.168.1.100
+
+Change to:
+
+--advertise-address=192.168.1.200
+
+Also check for:
+
+--bind-address=
+
+and any references to the old IP.
+
+5. Check kubeconfigs
+
+Search for the old IP:
+
+grep -R "192.168.1.100" /etc/kubernetes/
+
+Common files:
+
+/etc/kubernetes/admin.conf
+/etc/kubernetes/controller-manager.conf
+/etc/kubernetes/scheduler.conf
+/etc/kubernetes/kubelet.conf
+
+Update the kubeadm config with the new IP and regenerate:
+
+kubeadm certs renew apiserver
+
+or regenerate all certificates:
+
+kubeadm certs renew all
+
+Then restart kubelet:
+
+systemctl restart kubelet
+
+7. If the cluster is broken and can be rebuilt
+
+Since you were already running kubeadm reset, it may be faster to rebuild:
+
+kubeadm reset -f
+
+Clean up:
+
+rm -rf /etc/cni/net.d
+rm -rf /var/lib/cni
+rm -rf /var/lib/etcd
+
+Worker node:
+
+
+Configure kubelet to use the new IP.
+
+On RHEL 9, create or edit:
+
+vi /etc/sysconfig/kubelet
+
+Add:
+
+KUBELET_EXTRA_ARGS="--node-ip=<NEW_IP>" 
+example
+KUBELET_EXTRA_ARGS="--node-ip=192.168.123.50"
+
+
+Restart kubelet:
+systemctl daemon-reload
+systemctl restart kubelet
+
+
+
