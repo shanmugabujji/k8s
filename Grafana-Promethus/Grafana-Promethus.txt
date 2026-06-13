@@ -1,0 +1,81 @@
+✅ 1. Add Helm repo
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+✅ 2. Create namespace
+kubectl create namespace monitoring
+
+✅ 3. Create custom values file for NodePort
+
+Create a file:
+
+vi values.yaml
+
+grafana:
+  service:
+    type: NodePort
+    nodePort: 32000
+
+prometheus:
+  service:
+    type: NodePort
+    nodePort: 32001
+
+alertmanager:
+  service:
+    type: NodePort
+    nodePort: 32002
+
+
+✅ 4. Install Prometheus + Grafana stack
+helm install monitoring prometheus-community/kube-prometheus-stack \
+  -n monitoring \
+  -f values.yaml
+
+✅ 5. Check pods
+kubectl get pods -n monitoring
+
+
+✅ 6. Get NodePort services
+kubectl get svc -n monitoring
+
+You will see something like:
+
+grafana        NodePort   10.96.x.x   <none>   3000:32000/TCP
+prometheus     NodePort   10.96.x.x   <none>   9090:32001/TCP
+alertmanager   NodePort   10.96.x.x   <none>   9093:32002/TCP
+
+✅ 7. Access URLs
+
+Replace with any node IP (example: 172.29.71.47):
+
+Grafana
+http://172.29.71.47:32000
+
+Login:
+
+user: admin
+password:
+
+kubectl get secret -n monitoring monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 -d; echo
+
+Prometheus
+http://172.29.71.47:32001
+Alertmanager
+http://172.29.71.47:32002
+
+⚠️ Important RHEL 9 Notes
+1. Firewall (VERY IMPORTANT)
+
+Open ports:
+
+firewall-cmd --permanent --add-port=32000-32002/tcp
+firewall-cmd --reload
+
+2. SELinux
+
+If metrics not scraping:
+
+setenforce 0
+
+(Temporary test only
